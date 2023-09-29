@@ -21,3 +21,27 @@ export const option = {
     },
   },
 };
+
+export const loginUserSchema = Joi.object().keys({
+  email: Joi.string().trim().lowercase().required(),
+  password: Joi.string().min(3).required().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+});
+
+export const createOrganizationSchema = Joi.object().keys({
+  organization: Joi.string().min(4).required(),
+  marketValue: Joi.string().trim().lowercase().required(),
+  ceo: Joi.string().required(),
+  country: Joi.string().required(),
+  employees: Joi.array().items(Joi.string()),
+  products: Joi.array().items(Joi.string()),
+  address: Joi.string().required(),
+});
+
+// organization: string;
+//   products: string[];
+//   marketValue: string;
+//   address: string;
+//   ceo: string;
+//   country: string;
+//   noOfEmployees: number;
+//   employees: string[];
