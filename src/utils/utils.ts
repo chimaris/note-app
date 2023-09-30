@@ -28,13 +28,23 @@ export const loginUserSchema = Joi.object().keys({
 });
 
 export const createOrganizationSchema = Joi.object().keys({
-  organization: Joi.string().min(4).required(),
+  organization: Joi.string().trim().min(4).required(),
   marketValue: Joi.string().trim().lowercase().required(),
   ceo: Joi.string().required(),
   country: Joi.string().required(),
   employees: Joi.array().items(Joi.string()),
   products: Joi.array().items(Joi.string()),
   address: Joi.string().required(),
+});
+
+export const updateOrganizationSchema = Joi.object().keys({
+  organization: Joi.string().trim().min(4),
+  marketValue: Joi.string().trim().lowercase(),
+  ceo: Joi.string(),
+  country: Joi.string(),
+  employees: Joi.array().items(Joi.string()),
+  products: Joi.array().items(Joi.string()),
+  address: Joi.string(),
 });
 
 // organization: string;

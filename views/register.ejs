@@ -1,3 +1,65 @@
-<main>
-    <h1>Registration page</h1>
-</main>
+<%- include('partials/header') %>
+<style>
+  .background {
+    background-color: cadetblue;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+  }
+</style>
+
+<section class="background">
+  <main>
+    <div class="container min-vh-100 pt-5">
+      <h4 class="text-center">Please fill this form to register</h4>
+
+      <form class="row g-3" action="/users/register" method="POST">
+        <div class="col-12 form-group">
+          <label for="inputFullName" class="form-label">Full Name</label>
+          <input type="fullName" name="fullName" class="form-control" id="inputFullName" />
+          <% if(locals.error) { %>
+          <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
+          <% } %>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="inputEmail4" class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" id="inputEmail4" />
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="inputPassword4" class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" id="inputPassword4" />
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="inputPhone" class="form-label">Phone Number</label>
+          <input type="number" name="phone" class="form-control" id="inputPhone" />
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label for="inputGender" class="form-label">Gender</label>
+          <select id="inputGender" name="gender" class="form-select">
+            <option selected value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="col-12 form-group">
+          <label for="inputAddress" class="form-label">Address</label>
+          <input
+            type="text"
+            name="address"
+            class="form-control"
+            id="inputAddress"
+            placeholder="1234 Main St"
+          />
+        </div>
+
+        <div class="col-12 d-block text-center">
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</section>
+<footer><%- include('partials/footer.ejs') %></footer>

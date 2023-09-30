@@ -1,3 +1,53 @@
-<main>
-  <h1>Login page</h1>
-</main>
+<%- include('partials/header') %>
+<style>
+  .input {
+    background-color: cadetblue;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+  }
+</style>
+
+<section class="input">
+  <div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <form class="col-6" action="/user/login" method="POST">
+      <div class="mb-3 form-group">
+        <h4 class="text-center">Please Login</h4>
+        <label for="exampleInputEmail1" class="form-label text-bold">Email</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          required
+        />
+      </div>
+      <div class="mb-3 form-group">
+        <label for="exampleInputPassword1" class="form-label text-bold">Password</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          id="exampleInputPassword1"
+          required
+        />
+
+        <div class="d-block text-right">
+          <p>
+            <a
+              href="#"
+              class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+              >Forget Password</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="d-block text-center">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+  </div>
+</section>
+<footer><%- include('partials/footer.ejs') %></footer>

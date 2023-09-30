@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { loginUserSchema, option, registerUserSchema } from "../utils/utils";
 import { UserInstance } from "../model/userModel";
 import bcrypt from "bcrypt";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 
 const jwtSecret = process.env.JWT_SECRET as string;
@@ -10,22 +10,27 @@ const jwtSecret = process.env.JWT_SECRET as string;
 export const Register = async (req: Request, res: Response, next: NextFunction) => {
   // Get data from req body
   const { email, password } = req.body;
-  const id = uuid();
+  const id = uuidv4();
 
   // Validate with joi
   const validatedInput = registerUserSchema.validate(req.body, option);
   if (validatedInput.error) {
-    return res.status(400).json({
-      message: validatedInput.error.details[0].message,
-    });
+    // return res.status(400).json({
+    //   message: validatedInput.error.details[0].message,
+    // });
+
+    // Render the error on the register page
+    return res.render("register", { error: validatedInput.error.details[0].message });
   }
 
   // check if the user already exist
   const user = await UserInstance.findOne({ where: { email: email } });
   if (user) {
-    return res.status(401).json({
-      message: "Email is already exist",
-    });
+    // return res.status(401).json({
+    //   message: "Email is already exist",
+    // });
+
+    return res.render("register", { error: "Email is already exist" });
   }
 
   // Hash the password
@@ -38,10 +43,12 @@ export const Register = async (req: Request, res: Response, next: NextFunction) 
     ...req.body,
   });
 
-  res.status(201).json({
-    message: "Created Successfully",
-    data: newUser,
-  });
+  return res.redirect("/login");
+
+  // return res.status(201).json({
+  //   message: "Created Successfully",
+  //   data: newUser,
+  // });
 };
 
 export const Login = async (req: Request, res: Response, next: NextFunction) => {
@@ -52,9 +59,12 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
   const validatedInput = loginUserSchema.validate(req.body, option);
 
   if (validatedInput.error) {
-    return res.status(400).json({
-      message: validatedInput.error.details[0].message,
-    });
+    // return res.status(400).json({
+    //   message: validatedInput.error.details[0].message,
+    // });
+
+    // Render the error on the register page
+    return res.render("login", { error: validatedInput.error.details[0].message });
   }
 
   // check if the user exist
@@ -63,7 +73,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
   };
   if (!user) {
     return res.status(404).json({
-      message: "You are not a valid user, please sign in",
+      message: "Password or Email are incorrect",
     });
   }
 
@@ -74,7 +84,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: "30d" });
 
   // authenticate the user password by comparing the hashed one with the user input.
-  const validUser = bcrypt.compare(password, user.password);
+  const validUser = await bcrypt.compare(password, user.password);
 
   if (!validUser) {
     return res.status(404).json({

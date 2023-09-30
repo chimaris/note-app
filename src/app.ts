@@ -10,6 +10,7 @@ import organizationRouter from "./routes/organizations";
 
 import db from "./config/database.config";
 
+// force: true -  to drop the database
 db.sync()
   .then(() => {
     console.log("Database connected successfully!!");
