@@ -63,7 +63,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
     //   message: validatedInput.error.details[0].message,
     // });
 
-    // Render the error on the register page
+    // Render the error on the login page
     return res.render("login", { error: validatedInput.error.details[0].message });
   }
 
@@ -72,9 +72,12 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
     [key: string]: string;
   };
   if (!user) {
-    return res.status(404).json({
-      message: "Password or Email are incorrect",
-    });
+    // return res.status(404).json({
+    //   message: "Password or Email are incorrect",
+    // });
+
+    // Render the error on the login page
+    return res.render("login", { error: "Password or Email are incorrect" });
   }
 
   // destructure user id for token
@@ -83,19 +86,29 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
   // sign for a token that will expires in 30 days
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: "30d" });
 
+  // Set the token in a cookie
+  res.cookie("token", token, {
+    maxAge: 3600000, // Cookie expires after 1 hour (in milliseconds)
+    httpOnly: true, // Cookie is accessible only via HTTP(S)
+  });
+
   // authenticate the user password by comparing the hashed one with the user input.
   const validUser = await bcrypt.compare(password, user.password);
 
   if (!validUser) {
-    return res.status(404).json({
-      message: "Incorrect Password..",
-    });
+    // return res.status(404).json({
+    //   message: "Incorrect Password..",
+    // });
+
+    return res.render("login", { error: "Password or Email are incorrect" });
   }
+  return res.redirect("/dashboard");
+  // return res.render("dashboard", { token });
 
   // display user datails
-  return res.status(200).json({
-    message: "Login Successfully!",
-    user,
-    token,
-  });
+  // return res.status(200).json({
+  //   message: "Login Successfully!",
+  //   user,
+  //   token,
+  // });
 };

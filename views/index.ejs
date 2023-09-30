@@ -2,6 +2,50 @@
 <main>
   <h1><%= title %></h1>
   <p>Welcome to <%= title %></p>
+
+  <% if(notes.length > 0) { %>
+  <table
+    class="table caption-top mt-5 table-bordered text-center table-hover table-striped table-responsive"
+    style="margin: auto"
+  >
+    <caption>
+      List of all the notes
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">organization</th>
+        <th scope="col">ceo</th>
+        <th scope="col">address</th>
+        <th scope="col">marketValue</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% notes.forEach((note, i ) => { %>
+      <tr>
+        <th scope="row"><%= i+1 %></th>
+        <td><a href="/notes/<%= note.id %>" id="viewDetail"><%= note.organization %></a></td>
+        <td><%= note.ceo %></td>
+        <td><%= address %></td>
+        <td><%= note.marketValue %></td>
+        <td class="action-col" style="width: 30px">
+          <span role="button" data-bs-toggle="modal" data-bs-target="#updateModal"
+            ><i class="fa fa-edit" style="font-size: 24px; color: blue"></i
+          ></span>
+          <input class="d-none" id="userId" value="<%= note.id %>" />
+
+          <span role="button" id="deleteNote"
+            ><i class="fa fa-times" style="font-size: 24px; color: red"></i
+          ></span>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% }else {%>
+  <h2 class="text-center mt-5">No Note Found!</h2>
+  <% } %>
 </main>
 
 <%- include('partials/footer') %>

@@ -10,10 +10,190 @@
     padding: 50px;
   }
 </style>
-
 <main>
-  <h1>Dashboard</h1>
-  <p>Welcome to Dashboard</p>
-</main>
+  <h2 id="userName">Welcome, Stella Maris</h2>
+  <div class="d-flex flex-wrap align-items-center justify-content-between align-content-center">
+    <div class="d-flex justify-content-between mt-5" style="width: 100%">
+      <form class="col-6 col-lg-auto mb-lg-0 me-lg-3">
+        <input
+          type="search"
+          class="form-control form-control-dark"
+          placeholder="Search..."
+          aria-label="Search"
+        />
+      </form>
 
-<%- include('partials/footer') %>
+      <!-- Button trigger add note modal -->
+
+      <button
+        type="button"
+        class="btn btn-primary h-25"
+        data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop"
+      >
+        Add Note
+      </button>
+    </div>
+    <!-- Tables starts here -->
+    <% if(notes.length > 0) { %>
+    <table
+      class="table caption-top mt-5 table-bordered text-center table-hover table-striped table-responsive"
+      style="margin: auto"
+    >
+      <caption>
+        List of all the notes
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">organization</th>
+          <th scope="col">ceo</th>
+          <th scope="col">address</th>
+          <th scope="col">marketValue</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% notes.forEach((note, i ) => { %>
+        <tr>
+          <th scope="row"><%= i+1 %></th>
+          <td><a href="/notes/<%= note.id %>" id="viewDetail"><%= note.organization %></a></td>
+          <td><%= note.ceo %></td>
+          <td><%= address %></td>
+          <td><%= note.marketValue %></td>
+          <td class="action-col" style="width: 30px">
+            <span role="button" data-bs-toggle="modal" data-bs-target="#updateModal"
+              ><i class="fa fa-edit" style="font-size: 24px; color: blue"></i
+            ></span>
+            <input class="d-none" id="userId" value="<%= note.id %>" />
+
+            <span role="button" id="deleteNote"
+              ><i class="fa fa-times" style="font-size: 24px; color: red"></i
+            ></span>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% }else {%>
+    <h2 class="text-center mt-5">No Note Found!</h2>
+    <% } %>
+  </div>
+
+  <!-- ADD Form Modal -->
+  <form>
+    <div
+      class="modal fade"
+      id="staticBackdrop"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-primary" id="staticBackdropLabel">
+              Add New Organization
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <!-- First Column -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="organization" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="organization" name="organization" />
+                </div>
+                <% if(locals.error) { %>
+                <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
+                <% } %>
+
+                <div class="mb-3">
+                  <label for="marketValue" class="form-label">Market Value</label>
+                  <input type="text" class="form-control" id="marketValue" name="marketValue" />
+                </div>
+                <div class="mb-3">
+                  <label for="employees" class="form-label">Employees</label>
+                  <input type="text" class="form-control" id="employees" name="employees" />
+                </div>
+              </div>
+
+              <!-- Second Column -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="ceo" class="form-label">CEO</label>
+                  <input type="text" class="form-control" id="ceo" name="ceo" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="products" class="form-label">Products</label>
+                  <input type="text" class="form-control" id="products" name="products" />
+                </div>
+                <div class="mb-3">
+                  <label for="country" class="form-label">Country</label>
+                  <input type="text" class="form-control" id="country" name="country" />
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" id="address" name="address" required />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button class="btn btn-primary" id="addNewNote">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</main>
+<footer><%- include('partials/footer.ejs') %></footer>
+<script>
+  const jwtToken = "<%= token %>";
+  console.log(jwtToken);
+
+  const addNote = document.getElementById("addNewNote");
+  addNote.addEventListener("click", (e) => {
+    e.preventDefault();
+    const organization = document.getElementById("organization")?.value;
+    const marketValue = document.getElementById("marketValue")?.value;
+    const ceo = document.getElementById("ceo")?.value;
+    const country = document.getElementById("country")?.value;
+    const address = document.getElementById("address")?.value;
+    const products = document.getElementById("products")?.value;
+    const employees = document.getElementById("employees")?.value;
+    const requestData = { organization, marketValue, ceo, country, address };
+    console.log(jwtToken);
+    console.log(requestData);
+
+    if (marketValue != "" && ceo != "" && country != "" && address != "") {
+      fetch("/dashboard", {
+        method: "POST",
+        headers: new Headers({
+          Authorization: jwtToken,
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(requestData),
+      })
+        .then((response) => {
+          location.reload();
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  });
+</script>

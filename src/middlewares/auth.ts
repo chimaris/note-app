@@ -4,14 +4,17 @@ import { User, UserInstance } from "../model/userModel";
 
 export const auth = async (req: Request | any, res: Response, next: NextFunction) => {
   // find the token from the header
-  const authorization = req.headers.authorization;
+  // const authorization = req.headers.authorization;
 
-  if (!authorization) {
-    return res.status(401).json({ error: "Kindly sign in as a user" });
-  }
+  // if (!authorization) {
+  //   return res.status(401).json({ error: "Kindly sign in as a user" });
+  // }
 
-  // slice out the bearer from the beginning
-  const token = authorization?.slice(7);
+  // // slice out the bearer from the beginning
+  // const token = authorization?.slice(7);
+
+  // Getting token from cookies
+  const token = req.cookies.token;
 
   // verify the token
   const verified = jwt.verify(token, process.env.JWT_SECRET as string);

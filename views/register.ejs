@@ -17,7 +17,7 @@
       <form class="row g-3" action="/users/register" method="POST">
         <div class="col-12 form-group">
           <label for="inputFullName" class="form-label">Full Name</label>
-          <input type="fullName" name="fullName" class="form-control" id="inputFullName" />
+          <input type="text" name="fullname" class="form-control" id="inputFullName" />
           <% if(locals.error) { %>
           <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
           <% } %>

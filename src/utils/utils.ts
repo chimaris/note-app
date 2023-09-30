@@ -32,8 +32,8 @@ export const createOrganizationSchema = Joi.object().keys({
   marketValue: Joi.string().trim().lowercase().required(),
   ceo: Joi.string().required(),
   country: Joi.string().required(),
-  employees: Joi.array().items(Joi.string()),
-  products: Joi.array().items(Joi.string()),
+  // employees: Joi.array().items(Joi.string()),
+  // products: Joi.array().items(Joi.string()),
   address: Joi.string().required(),
 });
 
@@ -42,8 +42,8 @@ export const updateOrganizationSchema = Joi.object().keys({
   marketValue: Joi.string().trim().lowercase(),
   ceo: Joi.string(),
   country: Joi.string(),
-  employees: Joi.array().items(Joi.string()),
-  products: Joi.array().items(Joi.string()),
+  // employees: Joi.array().items(Joi.string()),
+  // products: Joi.array().items(Joi.string()),
   address: Joi.string(),
 });
 
