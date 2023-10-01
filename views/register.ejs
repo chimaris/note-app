@@ -9,25 +9,37 @@
             <div class="col-12 form-group">
               <label for="inputFullName" class="form-label">Full Name</label>
               <input type="text" name="fullname" class="form-control" id="inputFullName" />
-              <% if(locals.error) { %>
-              <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
-              <% } %>
+              <% if(locals.error) { %> <% if(error == "fullname is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px">Name is required</span>
+              <% } } %>
             </div>
             <div class="col-md-6 form-group">
               <label for="inputEmail4" class="form-label">Email</label>
               <input type="email" name="email" class="form-control" id="inputEmail4" />
-              <% if(locals.error) { %>
-              <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
-              <% } %>
+              <% if(locals.error) { %> <% if(error == "email is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Email is required</span
+              >
+              <% } } %>
             </div>
 
             <div class="col-md-6 form-group">
               <label for="inputPassword4" class="form-label">Password</label>
               <input type="password" name="password" class="form-control" id="inputPassword4" />
+              <% if(locals.error) { %> <% if(error == "password is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Password is required</span
+              >
+              <% } } %>
             </div>
             <div class="col-md-6 form-group">
               <label for="inputPhone" class="form-label">Phone Number</label>
               <input type="number" name="phone" class="form-control" id="inputPhone" />
+              <% if(locals.error) { %> <% if(error == "phone is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Phone is required</span
+              >
+              <% } } %>
             </div>
 
             <div class="col-md-6 form-group">
@@ -47,6 +59,11 @@
                 id="inputAddress"
                 placeholder="1234 Main St"
               />
+              <% if(locals.error) { %> <% if(error == "address is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Address is required</span
+              >
+              <% } } %>
             </div>
 
             <div class="col-12 d-block text-center">
