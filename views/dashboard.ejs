@@ -4,14 +4,8 @@
   href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
 />
 <!-- load fontawesome -->
-
-<style>
-  main {
-    padding: 50px;
-  }
-</style>
-<main>
-  <h2 id="userName">Welcome, Stella Maris</h2>
+<main style="padding: 50px">
+  <h2 id="userName">Welcome, <%= fullname %></h2>
   <div class="d-flex flex-wrap align-items-center justify-content-between align-content-center">
     <div class="d-flex justify-content-between mt-5" style="width: 100%">
       <form class="col-6 col-lg-auto mb-lg-0 me-lg-3">
@@ -23,51 +17,55 @@
         />
       </form>
 
-      <!-- Button trigger add note modal -->
-
+      <!-- Button trigger add org modal -->
       <button
         type="button"
-        class="btn btn-primary h-25"
+        class="btn h-25"
         data-bs-toggle="modal"
         data-bs-target="#staticBackdrop"
+        style="background-color: #8d448b; color: white; padding: 10px"
       >
-        Add Note
+        Add Organization
       </button>
     </div>
     <!-- Tables starts here -->
-    <% if(notes.length > 0) { %>
+    <% if(organizations.length > 0) { %>
     <table
       class="table caption-top mt-5 table-bordered text-center table-hover table-striped table-responsive"
       style="margin: auto"
     >
       <caption>
-        List of all the notes
+        List of all the organizations
       </caption>
       <thead>
         <tr>
           <th scope="col">#</th>
-          <th scope="col">organization</th>
-          <th scope="col">ceo</th>
-          <th scope="col">address</th>
-          <th scope="col">marketValue</th>
+          <th scope="col">Organization</th>
+          <th scope="col">CEO</th>
+          <th scope="col">Address</th>
+          <th scope="col">Market Value</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <% notes.forEach((note, i ) => { %>
+        <% organizations.forEach((org, i ) => { %>
         <tr>
           <th scope="row"><%= i+1 %></th>
-          <td><a href="/notes/<%= note.id %>" id="viewDetail"><%= note.organization %></a></td>
-          <td><%= note.ceo %></td>
-          <td><%= address %></td>
-          <td><%= note.marketValue %></td>
+          <td><a href="" id="viewDetail"><%= org.organization %></a></td>
+          <td><%= org.ceo %></td>
+          <td><%= org.address %></td>
+          <td><%= org.marketValue %></td>
           <td class="action-col" style="width: 30px">
-            <span role="button" data-bs-toggle="modal" data-bs-target="#updateModal"
-              ><i class="fa fa-edit" style="font-size: 24px; color: blue"></i
+            <span
+              role="button"
+              data-bs-toggle="modal"
+              data-bs-target="#updateModal"
+              onclick="getUpdateId(this)"
+              ><i class="fa fa-edit" style="font-size: 24px; color: #8d448b"></i
             ></span>
-            <input class="d-none" id="userId" value="<%= note.id %>" />
+            <input class="d-none" id="userId" value="<%= org.id %>" />
 
-            <span role="button" id="deleteNote"
+            <span role="button" id="deleteNote" onclick="deleteHandler(this)"
               ><i class="fa fa-times" style="font-size: 24px; color: red"></i
             ></span>
           </td>
@@ -76,7 +74,7 @@
       </tbody>
     </table>
     <% }else {%>
-    <h2 class="text-center mt-5">No Note Found!</h2>
+    <h2 class="text-center" style="margin-top: 150px">No Record Found!</h2>
     <% } %>
   </div>
 
@@ -94,7 +92,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5 text-primary" id="staticBackdropLabel">
+            <h1 class="modal-title fs-5" style="color: #8d448b" id="staticBackdropLabel">
               Add New Organization
             </h1>
             <button
@@ -151,8 +149,113 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button class="btn btn-primary" id="addNewNote">Submit</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="padding: 10px 40px"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              class="btn"
+              id="addNewNote"
+              style="background-color: #8d448b; color: white; padding: 10px 40px"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Update Form Modal -->
+  <form>
+    <div
+      class="modal fade"
+      id="updateModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="updateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" style="color: #8d448b" id="staticBackdropLabel">
+              Update Organization
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <!-- First Column -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="organization" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="organizationU" name="organization" />
+                </div>
+                <% if(locals.error) { %>
+                <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
+                <% } %>
+
+                <div class="mb-3">
+                  <label for="marketValue" class="form-label">Market Value</label>
+                  <input type="text" class="form-control" id="marketValueU" name="marketValue" />
+                </div>
+                <div class="mb-3">
+                  <label for="employees" class="form-label">Employees</label>
+                  <input type="text" class="form-control" id="employeesU" name="employees" />
+                </div>
+              </div>
+
+              <!-- Second Column -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="ceo" class="form-label">CEO</label>
+                  <input type="text" class="form-control" id="ceoU" name="ceo" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="products" class="form-label">Products</label>
+                  <input type="text" class="form-control" id="productsU" name="products" />
+                </div>
+                <div class="mb-3">
+                  <label for="country" class="form-label">Country</label>
+                  <input type="text" class="form-control" id="countryU" name="country" />
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="mb-3">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" id="addressU" name="address" required />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="padding: 10px 40px"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              class="btn"
+              id="updateButton"
+              style="background-color: #8d448b; color: white; padding: 10px 40px"
+            >
+              Update
+            </button>
           </div>
         </div>
       </div>
@@ -160,7 +263,10 @@
   </form>
 </main>
 <footer><%- include('partials/footer.ejs') %></footer>
+
+<!-- JavaScript Codes to consume APIs -->
 <script>
+  console.log("<%= organizations %>");
   const jwtToken = "<%= token %>";
   console.log(jwtToken);
 
@@ -196,4 +302,63 @@
         });
     }
   });
+
+  // Get current Id
+  let updateId = "";
+  const getUpdateId = (id) => {
+    if (id.parentElement.classList.contains("action-col")) {
+      updateId = id.parentElement.querySelector(".d-none").value;
+    }
+  };
+
+  // Update Function
+  document.getElementById("updateButton").addEventListener("click", (e) => {
+    e.preventDefault();
+    const organization = document.getElementById("organizationU")?.value;
+    const marketValue = document.getElementById("marketValueU")?.value;
+    const ceo = document.getElementById("ceoU")?.value;
+    const country = document.getElementById("countryU")?.value;
+    const address = document.getElementById("addressU")?.value;
+    const products = document.getElementById("productsU")?.value;
+    const employees = document.getElementById("employeesU")?.value;
+    const requestData = { organization, marketValue, ceo, country, address };
+
+    let obj = Object.entries(requestData).filter((arr, i) => arr[1] !== "");
+    obj = Object.fromEntries(obj);
+
+    fetch(`/edit/${updateId}`, {
+      method: "PATCH",
+      headers: new Headers({
+        Authorization: jwtToken,
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(obj),
+    })
+      .then((response) => {
+        location.reload();
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
+  // Delete Function
+  const deleteHandler = (id) => {
+    if (id.parentElement.classList.contains("action-col")) {
+      const orgId = id.parentElement.querySelector(".d-none").value;
+      fetch(`/delete/${orgId}`, {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: jwtToken,
+        }),
+      })
+        .then((response) => {
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  };
 </script>

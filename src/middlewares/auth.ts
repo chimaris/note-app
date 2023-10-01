@@ -19,9 +19,10 @@ export const auth = async (req: Request | any, res: Response, next: NextFunction
   // verify the token
   const verified = jwt.verify(token, process.env.JWT_SECRET as string);
   if (!verified) {
-    return res.status(401).json({
-      error: " Invalid Token",
-    });
+    // return res.status(401).json({
+    //   error: " Invalid Token",
+    // });
+    return res.redirect("/login");
   }
 
   // get the token id
@@ -29,9 +30,10 @@ export const auth = async (req: Request | any, res: Response, next: NextFunction
   const user = await UserInstance.findOne({ where: { id } });
 
   if (!user) {
-    return res.status(400).json({
-      error: "Please sign in as a user",
-    });
+    // return res.status(400).json({
+    //   error: "Please sign in as a user",
+    // });
+    return res.redirect("/login");
   }
 
   // pass to the next function or middle ware

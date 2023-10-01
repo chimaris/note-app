@@ -81,10 +81,10 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
   }
 
   // destructure user id for token
-  const { id } = user;
+  const { id, fullname } = user;
 
   // sign for a token that will expires in 30 days
-  const token = jwt.sign({ id }, jwtSecret, { expiresIn: "30d" });
+  const token = jwt.sign({ id, fullname }, jwtSecret, { expiresIn: "30d" });
 
   // Set the token in a cookie
   res.cookie("token", token, {

@@ -31,7 +31,7 @@ OrganizationInstance.init(
     },
     // products: {
     //   type: DataTypes.ARRAY(DataTypes.STRING), // Define an array of strings
-    //   // defaultValue: [], // Set a default empty array if needed
+    //   defaultValue: [], // Set a default empty array if needed
     // },
     marketValue: {
       type: DataTypes.STRING,
