@@ -45,6 +45,8 @@ router.get("/dashboard", auth, async (req: Request | any, res: Response, next: N
 
 router.post("/dashboard", auth, async (req: Request | any, res: Response, next: NextFunction) => {
   try {
+    const { fullname } = req.user;
+
     // get and validate the user input with joi
     const { organization } = req.body;
     const id = uuidv4();
@@ -58,6 +60,8 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
     const validatedInput = createOrganizationSchema.validate(req.body, option);
 
     if (validatedInput.error) {
+      console.log("error org");
+
       return res.render("dashboard", { error: validatedInput.error.details[0].message });
     }
 
@@ -80,7 +84,7 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
       ...req.body,
     });
     if (newOrg) {
-      return res.redirect("/dashboard");
+      return res.render("dashboard", { fullname: fullname });
     }
 
     console.log("Didnt create");
@@ -131,5 +135,36 @@ router.delete("/delete/:id", auth, async (req: Request, res: Response, next: Nex
     return res.redirect("/dashboard");
   }
 });
+
+router.get("/detail/:id", async (req: Request | any, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    const org = await OrganizationInstance.findOne({ where: { id } });
+    if (org) {
+      return res.render("detail", { org });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// Admin details
+router.get(
+  "/dashboard/detail/:id",
+  auth,
+  async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const org = await OrganizationInstance.findOne({ where: { id } });
+      if (org) {
+        return res.render("adminDetail", { org });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 
 export default router;

@@ -1,8 +1,8 @@
 <%- include('partials/header') %>
 <main style="padding: 50px">
   <div class="" style="margin: 20px auto; width: 80%; text-align: center">
-    <h1>Organization Tracker</h1>
-    <p>Organization search, made easy !!!</p>
+    <h1>Company Tracker</h1>
+    <p>Company search, made easy !!!</p>
   </div>
 
   <!-- Tables starts here -->
@@ -27,7 +27,7 @@
       <% organizations.forEach((org, i ) => { %>
       <tr>
         <th scope="row"><%= i+1 %></th>
-        <td><a href="" id="viewDetail"><%= org.organization %></a></td>
+        <td><a href="/detail/<%= org.id %>"><%= org.organization %></a></td>
         <td><%= org.ceo %></td>
         <td><%= org.address %></td>
         <td><%= org.marketValue %></td>

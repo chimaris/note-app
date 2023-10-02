@@ -6,6 +6,9 @@
 <!-- load fontawesome -->
 <main style="padding: 50px">
   <h2 id="userName">Welcome, <%= fullname %></h2>
+  <% if(locals.error) { %>
+  <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
+  <% } %>
   <div class="d-flex flex-wrap align-items-center justify-content-between align-content-center">
     <div class="d-flex justify-content-between mt-5" style="width: 100%">
       <form class="col-6 col-lg-auto mb-lg-0 me-lg-3">
@@ -51,7 +54,7 @@
         <% organizations.forEach((org, i ) => { %>
         <tr>
           <th scope="row"><%= i+1 %></th>
-          <td><a href="" id="viewDetail"><%= org.organization %></a></td>
+          <td><a href="/dashboard/detail/<%= org.id %>"><%= org.organization %></a></td>
           <td><%= org.ceo %></td>
           <td><%= org.address %></td>
           <td><%= org.marketValue %></td>
@@ -79,7 +82,7 @@
   </div>
 
   <!-- ADD Form Modal -->
-  <form>
+  <form onsubmit="createOrg()" method="post">
     <div
       class="modal fade"
       id="staticBackdrop"
@@ -108,7 +111,13 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="organization" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="organization" name="organization" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="organization"
+                    name="organization"
+                    required
+                  />
                 </div>
                 <% if(locals.error) { %>
                 <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
@@ -116,7 +125,13 @@
 
                 <div class="mb-3">
                   <label for="marketValue" class="form-label">Market Value</label>
-                  <input type="text" class="form-control" id="marketValue" name="marketValue" />
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="marketValue"
+                    name="marketValue"
+                    required
+                  />
                 </div>
                 <div class="mb-3">
                   <label for="employees" class="form-label">Employees</label>
@@ -128,7 +143,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="ceo" class="form-label">CEO</label>
-                  <input type="text" class="form-control" id="ceo" name="ceo" />
+                  <input type="text" class="form-control" id="ceo" name="ceo" required />
                 </div>
 
                 <div class="mb-3">
@@ -137,7 +152,7 @@
                 </div>
                 <div class="mb-3">
                   <label for="country" class="form-label">Country</label>
-                  <input type="text" class="form-control" id="country" name="country" />
+                  <input type="text" class="form-control" id="country" name="country" required />
                 </div>
               </div>
               <div class="col-md-12">
@@ -157,13 +172,12 @@
             >
               Close
             </button>
-            <button
+            <input
+              type="submit"
               class="btn"
               id="addNewNote"
               style="background-color: #8d448b; color: white; padding: 10px 40px"
-            >
-              Submit
-            </button>
+            />
           </div>
         </div>
       </div>
@@ -250,6 +264,7 @@
               Close
             </button>
             <button
+              type=""
               class="btn"
               id="updateButton"
               style="background-color: #8d448b; color: white; padding: 10px 40px"
@@ -270,9 +285,11 @@
   const jwtToken = "<%= token %>";
   console.log(jwtToken);
 
-  const addNote = document.getElementById("addNewNote");
-  addNote.addEventListener("click", (e) => {
-    e.preventDefault();
+  // const addNote = document.getElementById("addNewNote");
+  // addNote.addEventListener("click", (e) => {
+  const createOrg = () => {
+    // e.preventDefault();
+
     const organization = document.getElementById("organization")?.value;
     const marketValue = document.getElementById("marketValue")?.value;
     const ceo = document.getElementById("ceo")?.value;
@@ -284,7 +301,7 @@
     console.log(jwtToken);
     console.log(requestData);
 
-    if (marketValue != "" && ceo != "" && country != "" && address != "") {
+    if (organization != "" && marketValue != "" && ceo != "" && country != "" && address != "") {
       fetch("/dashboard", {
         method: "POST",
         headers: new Headers({
@@ -301,7 +318,8 @@
           console.error("Error:", error);
         });
     }
-  });
+  };
+  //);
 
   // Get current Id
   let updateId = "";
