@@ -1,36 +1,35 @@
 <%- include('partials/header') %>
 <main style="width: 95%; margin: auto">
   <div class="" style="margin: 20px auto; width: 80%; text-align: center">
-    <h1>Company Tracker</h1>
-    <p>Company search, made easy !!!</p>
+    <h1>Note App</h1>
+    <p>Your notes on the cloud !!!</p>
   </div>
   <div style="overflow-x: auto">
-    <% if(organizations.length > 0) { %>
+    <% if(notes.length > 0) { %>
     <table
       class="table caption-top table-bordered text-center table-hover table-striped table-responsive"
     >
       <caption>
-        List of all the organizations
+        List of all the notes
       </caption>
       <thead style="background-color: #8d448b; color: white">
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Organization</th>
-          <th scope="col">CEO</th>
-          <th scope="col">No of Employess</th>
-          <th scope="col">Country</th>
-          <th scope="col">Market Value</th>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Created By</th>
+          <th scope="col">Status</th>
         </tr>
       </thead>
       <tbody>
-        <% organizations.forEach((org, i ) => { %>
+        <% notes.forEach((note, i ) => { %>
         <tr>
           <th scope="row"><%= i+1 %></th>
-          <td><a href="/detail/<%= org.id %>"><%= org.organization %></a></td>
-          <td><%= org.ceo %></td>
-          <td><%= org.noOfEmployees %></td>
-          <td><%= org.country %></td>
-          <td><%= org.marketValue %>%</td>
+          <td><a href="/detail/<%= note.id %>"><%= note.Title %></a></td>
+          <td><%= note.description %></td>
+          <td><%= new Date(note.DueDate).toLocaleString() %></td>
+          <td><%= note.user.fullName %></td>
         </tr>
         <% }) %>
       </tbody>

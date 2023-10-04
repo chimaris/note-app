@@ -1,15 +1,15 @@
 import express, { Request, Response, NextFunction } from "express";
-import { createOrganizationSchema, option, updateOrganizationSchema } from "../utils/utils";
-import { OrganizationInstance } from "../model/organizationModel";
+import { createNoteSchema, option, updateNoteSchema } from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
 import { auth } from "../middlewares/auth";
 import { UserInstance } from "../model/userModel";
+import { NoteInstance } from "../model/noteModel";
 
 var router = express.Router();
 
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const allOrganization = await OrganizationInstance.findAll();
-  return res.render("index", { organizations: allOrganization });
+  const allOrganization = await NoteInstance.findAll();
+  return res.render("index", { notes: allOrganization });
 });
 
 router.get("/login", (req: Request, res: Response, next: NextFunction) => {
@@ -28,14 +28,14 @@ router.get("/register", (req: Request, res: Response, next: NextFunction) => {
 router.get("/dashboard", auth, async (req: Request | any, res: Response, next: NextFunction) => {
   const { id, fullname } = req.user;
   try {
-    const allOrganization = await OrganizationInstance.findAll({
+    const allOrganization = await NoteInstance.findAll({
       where: { userId: id },
       include: [{ model: UserInstance, as: "user" }],
     });
 
     res.render("dashboard", {
       token: req.cookies.token,
-      organizations: allOrganization,
+      notes: allOrganization,
       fullname: fullname,
     });
   } catch (error) {
@@ -48,14 +48,14 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
     const { fullname } = req.user;
 
     // get and validate the user input with joi
-    let { organization, products, employees } = req.body;
+    let { Title } = req.body;
     const id = uuidv4();
 
     // Get user info from middleware auth
     const verified = req.user;
 
     // validate with joi
-    const validatedInput = createOrganizationSchema.validate(req.body, option);
+    const validatedInput = createNoteSchema.validate(req.body, option);
 
     if (validatedInput.error) {
       return res.render("dashboard", {
@@ -65,24 +65,20 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
     }
 
     // check if the organization already exist
-    const org = await OrganizationInstance.findOne({
-      where: { organization: organization },
+    const org = await NoteInstance.findOne({
+      where: { Title: Title },
     });
     if (org) {
-      return res.render("dashboard", { error: "Organization already exist" });
+      return res.render("dashboard", { error: "Note already exist" });
     }
 
-    // Set up user data to fit to database
-    const noOfEmployees = employees.length;
-    req.body.products = JSON.stringify(products);
-    req.body.employees = JSON.stringify(employees);
+    req.body.status = "pending";
 
     // save to database
-    const newOrg = await OrganizationInstance.create({
+    const newOrg = await NoteInstance.create({
       id: id,
       userId: verified.id,
       ...req.body,
-      noOfEmployees,
     });
     if (newOrg) {
       return res.redirect("/dashboard");
@@ -96,26 +92,21 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
 
 router.patch("/edit/:id", auth, async (req: Request | any, res: Response, next: NextFunction) => {
   const id = req.params.id;
-  let { products, employees } = req.body;
+  let { Title } = req.body;
 
   // validate req body with joi
-  const validatedInput = updateOrganizationSchema.validate(req.body, option);
+  const validatedInput = updateNoteSchema.validate(req.body, option);
   if (validatedInput.error) {
     return res.render("dashboard", { error: validatedInput.error.details[0].message });
   }
   // find the data to update from database and update
-  const org = await OrganizationInstance.findOne({ where: { id } });
+  const org = await NoteInstance.findOne({ where: { id } });
 
   if (!org) {
     return res.render("dashboard", { error: "Record not found" });
   }
 
-  // Set up user data to fit to database
-  const noOfEmployees = employees.length;
-  req.body.products = JSON.stringify(products);
-  req.body.employees = JSON.stringify(employees);
-
-  const updated = await org.update({ ...req.body, noOfEmployees });
+  const updated = await org.update({ ...req.body });
 
   if (updated) {
     return res.redirect("/dashboard");
@@ -125,7 +116,7 @@ router.patch("/edit/:id", auth, async (req: Request | any, res: Response, next: 
 router.delete("/delete/:id", auth, async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
 
-  const org = await OrganizationInstance.findOne({ where: { id } });
+  const org = await NoteInstance.findOne({ where: { id } });
 
   if (!org) {
     return res.status(400).json({
@@ -145,7 +136,7 @@ router.get("/detail/:id", async (req: Request | any, res: Response, next: NextFu
   try {
     const { id } = req.params;
 
-    const org = await OrganizationInstance.findOne({ where: { id } });
+    const org = await NoteInstance.findOne({ where: { id } });
     if (org) {
       return res.render("detail", { org });
     }
@@ -162,7 +153,7 @@ router.get(
     try {
       const { id } = req.params;
 
-      const org = await OrganizationInstance.findOne({ where: { id } });
+      const org = await NoteInstance.findOne({ where: { id } });
       if (org) {
         return res.render("adminDetail", { org });
       }
