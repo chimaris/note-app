@@ -8,8 +8,10 @@ import { NoteInstance } from "../model/noteModel";
 var router = express.Router();
 
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const allOrganization = await NoteInstance.findAll();
-  return res.render("index", { notes: allOrganization });
+  const allNotes = await NoteInstance.findAll({
+    include: [{ model: UserInstance, as: "user" }],
+  });
+  return res.render("index", { notes: allNotes });
 });
 
 router.get("/login", (req: Request, res: Response, next: NextFunction) => {
@@ -28,14 +30,14 @@ router.get("/register", (req: Request, res: Response, next: NextFunction) => {
 router.get("/dashboard", auth, async (req: Request | any, res: Response, next: NextFunction) => {
   const { id, fullname } = req.user;
   try {
-    const allOrganization = await NoteInstance.findAll({
+    const allNotes = await NoteInstance.findAll({
       where: { userId: id },
       include: [{ model: UserInstance, as: "user" }],
     });
 
     res.render("dashboard", {
       token: req.cookies.token,
-      notes: allOrganization,
+      notes: allNotes,
       fullname: fullname,
     });
   } catch (error) {
@@ -136,9 +138,9 @@ router.get("/detail/:id", async (req: Request | any, res: Response, next: NextFu
   try {
     const { id } = req.params;
 
-    const org = await NoteInstance.findOne({ where: { id } });
-    if (org) {
-      return res.render("detail", { org });
+    const note = await NoteInstance.findOne({ where: { id } });
+    if (note) {
+      return res.render("detail", { note });
     }
   } catch (err) {
     console.log(err);
@@ -153,9 +155,9 @@ router.get(
     try {
       const { id } = req.params;
 
-      const org = await NoteInstance.findOne({ where: { id } });
-      if (org) {
-        return res.render("adminDetail", { org });
+      const note = await NoteInstance.findOne({ where: { id } });
+      if (note) {
+        return res.render("adminDetail", { note });
       }
     } catch (err) {
       console.log(err);

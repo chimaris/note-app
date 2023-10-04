@@ -29,7 +29,12 @@
           <td><a href="/detail/<%= note.id %>"><%= note.Title %></a></td>
           <td><%= note.description %></td>
           <td><%= new Date(note.DueDate).toLocaleString() %></td>
-          <td><%= note.user.fullName %></td>
+          <td><%= note.user.fullname %></td>
+          <td
+            class="fs-14 badge rounded-pill pt-1 text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
+          >
+            <%= note.status %>
+          </td>
         </tr>
         <% }) %>
       </tbody>

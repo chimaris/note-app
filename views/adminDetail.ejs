@@ -1,46 +1,38 @@
 <%- include('partials/dashboardHeader') %>
 <main class="card mx-auto mt-5 p-2" style="width: 50%">
   <div class="card-body border-bottom">
-    <h5 class="card-title text-uppercase fs-1 fw-bold"><%= org.organization %></h5>
-    <p class="card-text"><%= org.address %></p>
+    <h5 class="card-title text-uppercase fs-1 fw-bold"><%= note.Title %></h5>
   </div>
   <table class="table">
     <tbody>
       <tr>
-        <th scope="row">Organization</th>
-        <td><%= org.organization %></td>
+        <th scope="row"><Title></Title></th>
+        <td><%= note.Title %></td>
       </tr>
       <tr>
-        <th scope="row">CEO</th>
-        <td><%= org.ceo %></td>
+        <th scope="row">Description</th>
+        <td><%= note.description %></td>
       </tr>
       <tr>
-        <th scope="row">No of Employees</th>
-        <td colspan="2"><%= org.noOfEmployees %></td>
+        <th scope="row">Due Date</th>
+        <td colspan="2"><%= new Date(note.DueDate).toLocaleString() %></td>
       </tr>
       <tr>
-        <th scope="row">Market Value</th>
-        <td colspan="2"><%= org.marketValue %>%</td>
+        <th scope="row">Status</th>
+        <td
+          class="fs-14 badge pt-1 rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
+        >
+          <%= note.status %>
+        </td>
       </tr>
-      <tr>
-        <th scope="row">Products</th>
-        <td colspan="2"><%= JSON.parse(org.products).join(',') %></td>
-      </tr>
-      <tr>
-        <th scope="row">Employees</th>
-        <td colspan="2"><%= JSON.parse(org.employees).join(',') %></td>
-      </tr>
-      <tr>
-        <th scope="row">Address</th>
-        <td colspan="2"><%= org.address %></td>
-      </tr>
+
       <tr>
         <th scope="row">Created At</th>
-        <td colspan="2"><%= new Date(org.createdAt).toLocaleString() %></td>
+        <td colspan="2"><%= new Date(note.createdAt).toLocaleString() %></td>
       </tr>
       <tr>
         <th scope="row">Updated At</th>
-        <td colspan="2"><%= new Date(org.updatedAt).toLocaleString() %></td>
+        <td colspan="2"><%= new Date(note.updatedAt).toLocaleString() %></td>
       </tr>
     </tbody>
   </table>

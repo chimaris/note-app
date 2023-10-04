@@ -57,8 +57,9 @@
             <td><a href="/detail/<%= note.id %>" id="titleD"><%= note.Title %></a></td>
             <td id="desD"><%= note.description %></td>
             <td id="dateD"><%= new Date(note.DueDate).toLocaleString() %></td>
-            <td id="statusD"
-              class="fs-14 badge rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
+            <td
+              id="statusD"
+              class="fs-14 pt-1 badge rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
             >
               <%= note.status %>
             </td>
@@ -116,14 +117,14 @@
               <div class="col-md-12">
                 <div class="mb-3">
                   <label for="title" class="form-label">Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="title"
-                name="Title"
-                placeholder="Title"
-                required="required"
-              />
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    name="Title"
+                    placeholder="Title"
+                    required="required"
+                  />
                 </div>
                 <% if(locals.error) { %>
                 <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
@@ -131,21 +132,20 @@
 
                 <div class="mb-3">
                   <label for="description" class="form-label">Description</label>
-              <textarea
-                class="form-control"
-                id="description"
-                rows="3"
-                name="description"
-                placeholder="Write in full detail"
-                required="required"
-              ></textarea>
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    rows="3"
+                    name="description"
+                    placeholder="Write in full detail"
+                    required="required"
+                  ></textarea>
                 </div>
                 <div class="mb-3">
                   <label for="dueDate" class="form-label">Due Date</label>
-              <input type="date" name="DueDate" class="form-control" id="DueDate" required />
+                  <input type="date" name="DueDate" class="form-control" id="DueDate" required />
                 </div>
               </div>
-             
             </div>
           </div>
           <div class="modal-footer">
@@ -184,9 +184,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5 fw-bold" style="color: #8d448b" id="staticBackdropLabel">
-              Update Note
-            </h1>
+            <h1 class="modal-title fs-5 text-primary" id="updateModalLabel">Update Note</h1>
             <button
               type="button"
               class="btn-close"
@@ -195,11 +193,8 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="row col-md-12">
-              <!-- First Column -->
-              <div class="col-md-12">
-                <div class="mb-3">
-                  <label for="title" class="form-label">Title</label>
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
               <input
                 type="text"
                 class="form-control"
@@ -208,22 +203,20 @@
                 placeholder="Title"
                 required
               />
-                <% if(locals.error) { %>
-                <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
-                <% } %>
-
-                <div class="mb-3">
-                  <label for="description" class="form-label">Description</label>
-                  <textarea
-                    class="form-control"
-                    id="descriptionU"
-                    rows="3"
-                    name="description"
-                    placeholder="Write in full detail"
-                    required
-                  ></textarea>
-                <div class="mb-3">
-                  <label for="status" class="form-label">Status</label>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="descriptionU"
+                rows="3"
+                name="description"
+                placeholder="Write in full detail"
+                required
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
               <select
                 class="form-select"
                 aria-label="Select status"
@@ -231,26 +224,19 @@
                 id="statusU"
                 required
               >
-                <option value="Pending">Pending</option>
-                <option value="On it">On it</option>
-                <option value="Completed">Completed</option>
+                <option value="">Select status</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
               </select>
-                </div>
-              </div>
-
+            </div>
+            <div class="mb-3">
+              <label for="dueDate" class="form-label">Due Date</label>
+              <input type="date" name="DueDate" class="form-control" id="DueDateU" required />
             </div>
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button
-              type="button"
-              class="btn btn-secondary"
-              style="padding: 10px 40px"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type=""
               class="btn"
               id="updateButton"
               style="background-color: #8d448b; color: white; padding: 10px 40px"
@@ -312,14 +298,13 @@
     const desD = document.getElementById("desD").textContent;
     const dateD = document.getElementById("dateD").textContent;
     const statusD = document.getElementById("statusD").textContent;
-    
-    console.log(titleD)
+
+    console.log(titleD, desD, dateD, statusD);
     // Assign previous values for update
     document.getElementById("descriptionU").value = desD;
-    document.getElementById("DueDateU").value = dateD;
+    // document.getElementById("DueDateU").value = dateD;
     document.getElementById("statusU").value = statusD;
     document.getElementById("titleU").value = titleD;
-   
   };
 
   // Update Function
@@ -329,7 +314,7 @@
     const description = document.getElementById("descriptionU").value;
     const status = document.getElementById("statusU").value;
     const DueDate = document.getElementById("DueDateU").value;
-    
+
     const requestData = { Title, description, status, DueDate };
 
     let obj = Object.entries(requestData).filter((arr, i) => arr[1] !== "");
