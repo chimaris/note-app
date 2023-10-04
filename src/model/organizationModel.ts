@@ -5,13 +5,13 @@ import { UserInstance } from "./userModel";
 export interface Organization {
   id: string;
   organization: string;
-  // products: string[];
+  products: string; // string[];
   marketValue: string;
   address: string;
   ceo: string;
   country: string;
   noOfEmployees: number;
-  // employees: string[];
+  employees: string; // string[];
   userId: string;
 }
 
@@ -29,10 +29,10 @@ OrganizationInstance.init(
       unique: true,
       allowNull: false,
     },
-    // products: {
-    //   type: DataTypes.ARRAY(DataTypes.STRING), // Define an array of strings
-    //   defaultValue: [], // Set a default empty array if needed
-    // },
+    products: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     marketValue: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -53,10 +53,10 @@ OrganizationInstance.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    // employees: {
-    //   type: DataTypes.ARRAY(DataTypes.STRING), // Define an array of strings
-    //   //   defaultValue: [], // Set a default empty array if needed
-    // },
+    employees: {
+      type: DataTypes.STRING, // DataTypes.ARRAY(DataTypes.STRING), // Define an array of strings
+      allowNull: false, // //defaultValue: [], // Set a default empty array if needed
+    },
     userId: {
       type: DataTypes.STRING,
     },

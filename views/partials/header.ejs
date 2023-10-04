@@ -5,37 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
     <!-- CSS (load bootstrap from a CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link
-    rel="stylesheet"
-    href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
-  />
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+    />
     <title>Organization Tracker</title>
+
+    <style>
+      @media screen and (max-width: 600px) {
+        .search {
+          display: none;
+        }
+        .button {
+          margin: 20px auto;
+        }
+        a {
+          margin: auto;
+        }
+        .right-menu {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+      }
+    </style>
   </head>
 
   <body style="background-color: #e6e2eb">
+    <nav class="navbar navbar-dark bg-dark p-3">
+      <a
+        href="/"
+        class="navbar-brand px-3 text-white"
+        style="
+          background-color: #8d448b;
+          color: white;
+          padding: 5px;
+          border-radius: 50%;
+          font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        "
+        >OrgTracker</a
+      >
 
-    <header class="p-3 bg-dark text-white">
-    <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li style="background-color: #8d448b; color: white; padding: 5px; border-radius: 50%; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;"><a href="/" class="nav-link px-3 text-white">OrgTracker</a></li>
-          
-        </ul>
-        <div class="d-flex flex-wrap align-items-center justify-content-between justify-content-lg-end">
-        <form class="col-6 col-lg-auto mb-2 mb-lg-0 me-lg-3">
-          <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+      <div class="right-menu d-flex">
+        <form class="col-6 col-lg-auto mb-2 mb-lg-0 me-lg-3 search">
+          <input
+            type="search"
+            class="form-control form-control-dark"
+            placeholder="Search..."
+            aria-label="Search"
+          />
         </form>
-
-        <div class="text-end mb-2">
-          <a href="/login" class="btn btn-outline-light me-2">Login</a>
-          <a href="/register" class="btn" style="background-color: #8d448b; color: white;">Sign-up</a>
-        </div>
-        </div>
-        </div>
+        <ul class="d-flex button">
+          <li class="nav-item">
+            <a href="/login" class="btn btn-outline-light me-2">Login</a>
+          </li>
+          <li class="nav-item">
+            <a href="/register" class="btn" style="background-color: #8d448b; color: white"
+              >Sign-up</a
+            >
+          </li>
+        </ul>
       </div>
-  </nav>
-  </header>
-
-
+    </nav>
+  </body>
+</html>

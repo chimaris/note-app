@@ -39,7 +39,7 @@ router.get("/dashboard", auth, async (req: Request | any, res: Response, next: N
       fullname: fullname,
     });
   } catch (error) {
-    next(error);
+    console.log(error);
   }
 });
 
@@ -48,21 +48,20 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
     const { fullname } = req.user;
 
     // get and validate the user input with joi
-    const { organization } = req.body;
+    let { organization, products, employees } = req.body;
     const id = uuidv4();
 
-    console.log("post org");
-
-    // Get user id from middleware auth
+    // Get user info from middleware auth
     const verified = req.user;
 
     // validate with joi
     const validatedInput = createOrganizationSchema.validate(req.body, option);
 
     if (validatedInput.error) {
-      console.log("error org");
-
-      return res.render("dashboard", { error: validatedInput.error.details[0].message });
+      return res.render("dashboard", {
+        fullname: fullname,
+        error: validatedInput.error.details[0].message,
+      });
     }
 
     // check if the organization already exist
@@ -73,18 +72,20 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
       return res.render("dashboard", { error: "Organization already exist" });
     }
 
-    // get number of employees
-    // const noOfEmployees = employees.length;
+    // Set up user data to fit to database
+    const noOfEmployees = employees.length;
+    req.body.products = JSON.stringify(products);
+    req.body.employees = JSON.stringify(employees);
 
-    console.log({ id: id, userId: verified.id, ...req.body });
     // save to database
     const newOrg = await OrganizationInstance.create({
       id: id,
       userId: verified.id,
       ...req.body,
+      noOfEmployees,
     });
     if (newOrg) {
-      return res.render("dashboard", { fullname: fullname });
+      return res.redirect("/dashboard");
     }
 
     console.log("Didnt create");
@@ -94,9 +95,8 @@ router.post("/dashboard", auth, async (req: Request | any, res: Response, next: 
 });
 
 router.patch("/edit/:id", auth, async (req: Request | any, res: Response, next: NextFunction) => {
-  // get id of the organization to update
   const id = req.params.id;
-  console.log(id);
+  let { products, employees } = req.body;
 
   // validate req body with joi
   const validatedInput = updateOrganizationSchema.validate(req.body, option);
@@ -110,7 +110,12 @@ router.patch("/edit/:id", auth, async (req: Request | any, res: Response, next: 
     return res.render("dashboard", { error: "Record not found" });
   }
 
-  const updated = await org.update({ ...req.body });
+  // Set up user data to fit to database
+  const noOfEmployees = employees.length;
+  req.body.products = JSON.stringify(products);
+  req.body.employees = JSON.stringify(employees);
+
+  const updated = await org.update({ ...req.body, noOfEmployees });
 
   if (updated) {
     return res.redirect("/dashboard");

@@ -29,21 +29,21 @@ export const loginUserSchema = Joi.object().keys({
 
 export const createOrganizationSchema = Joi.object().keys({
   organization: Joi.string().trim().min(4).required(),
-  marketValue: Joi.string().trim().lowercase().required(),
+  marketValue: Joi.number().min(1).max(100).required(),
   ceo: Joi.string().required(),
   country: Joi.string().required(),
-  // employees: Joi.array().items(Joi.string()),
-  // products: Joi.array().items(Joi.string()),
+  employees: Joi.array().items(Joi.string().trim()),
+  products: Joi.array().items(Joi.string().trim()),
   address: Joi.string().required(),
 });
 
 export const updateOrganizationSchema = Joi.object().keys({
   organization: Joi.string().trim().min(4),
-  marketValue: Joi.string().trim().lowercase(),
+  marketValue: Joi.number().min(1).max(100),
   ceo: Joi.string(),
   country: Joi.string(),
-  // employees: Joi.array().items(Joi.string()),
-  // products: Joi.array().items(Joi.string()),
+  employees: Joi.array().items(Joi.string()),
+  products: Joi.array().items(Joi.string()),
   address: Joi.string(),
 });
 

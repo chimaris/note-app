@@ -4,8 +4,8 @@
   href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
 />
 <!-- load fontawesome -->
-<main style="padding: 50px">
-  <h2 id="userName">Welcome, <%= fullname %></h2>
+<main style="width: 95%; margin: auto">
+  <h2 id="userName" class="mt-3">Welcome, <%= fullname %></h2>
   <% if(locals.error) { %>
   <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
   <% } %>
@@ -32,57 +32,65 @@
       </button>
     </div>
     <!-- Tables starts here -->
-    <% if(organizations.length > 0) { %>
-    <table
-      class="table caption-top mt-5 table-bordered text-center table-hover table-striped table-responsive"
-      style="margin: auto"
-    >
-      <caption>
-        List of all the organizations
-      </caption>
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Organization</th>
-          <th scope="col">CEO</th>
-          <th scope="col">Address</th>
-          <th scope="col">Market Value</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% organizations.forEach((org, i ) => { %>
-        <tr>
-          <th scope="row"><%= i+1 %></th>
-          <td><a href="/dashboard/detail/<%= org.id %>"><%= org.organization %></a></td>
-          <td><%= org.ceo %></td>
-          <td><%= org.address %></td>
-          <td><%= org.marketValue %></td>
-          <td class="action-col" style="width: 30px">
-            <span
-              role="button"
-              data-bs-toggle="modal"
-              data-bs-target="#updateModal"
-              onclick="getUpdateId(this)"
-              ><i class="fa fa-edit" style="font-size: 24px; color: #8d448b"></i
-            ></span>
-            <input class="d-none" id="userId" value="<%= org.id %>" />
+    <div style="overflow: auto; width: 100%">
+      <% if(organizations.length > 0) { %>
+      <table
+        class="table caption-top table-bordered text-center table-hover table-striped table-responsive"
+      >
+        <caption>
+          List of all the organizations
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Organization</th>
+            <th scope="col">CEO</th>
+            <th scope="col">No of Employess</th>
+            <th scope="col">Country</th>
+            <th scope="col">Market Value</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% organizations.forEach((org, i ) => { %>
+          <tr>
+            <th scope="row"><%= i+1 %></th>
+            <td>
+              <a href="/dashboard/detail/<%= org.id %>" id="nameD"><%= org.organization %></a>
+            </td>
+            <td id="ceoD"><%= org.ceo %></td>
+            <td><%= org.noOfEmployees %></td>
+            <td id="countryD"><%= org.country %></td>
+            <td id="marketD"><%= org.marketValue %>%</td>
+            <td id="employeeD" class="d-none"><%= JSON.parse(org.employees).join(',') %></td>
+            <td id="productD" class="d-none"><%= JSON.parse(org.products).join(',') %></td>
+            <td id="addressD" class="d-none"><%= org.address %></td>
+            <td class="action-col" style="width: 30px">
+              <span
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#updateModal"
+                onclick="getUpdateId(this)"
+                ><i class="fa fa-edit" style="font-size: 24px; color: #8d448b"></i
+              ></span>
+              <input class="d-none locateID" id="userId" value="<%= org.id %>" />
 
-            <span role="button" id="deleteNote" onclick="deleteHandler(this)"
-              ><i class="fa fa-times" style="font-size: 24px; color: red"></i
-            ></span>
-          </td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
-    <% }else {%>
-    <h2 class="text-center" style="margin-top: 150px">No Record Found!</h2>
-    <% } %>
+              <span role="button" id="deleteNote" onclick="deleteHandler(this)"
+                ><i class="fa fa-times" style="font-size: 24px; color: red"></i
+              ></span>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% }else {%>
+      <h2 class="text-center m-auto mt-5" style="margin-top: 150px">No Record Found!</h2>
+      <% } %>
+    </div>
   </div>
 
   <!-- ADD Form Modal -->
-  <form onsubmit="createOrg()" method="post">
+  <form>
     <div
       class="modal fade"
       id="staticBackdrop"
@@ -95,7 +103,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" style="color: #8d448b" id="staticBackdropLabel">
+            <h1 class="modal-title fs-5 fw-bold" style="color: #8d448b" id="staticBackdropLabel">
               Add New Organization
             </h1>
             <button
@@ -110,12 +118,13 @@
               <!-- First Column -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="organization" class="form-label">Name</label>
+                  <label for="organization" class="form-label fw-bold">Name</label>
                   <input
                     type="text"
                     class="form-control"
                     id="organization"
                     name="organization"
+                    placeholder="full name"
                     required
                   />
                 </div>
@@ -124,41 +133,73 @@
                 <% } %>
 
                 <div class="mb-3">
-                  <label for="marketValue" class="form-label">Market Value</label>
+                  <label for="marketValue" class="form-label fw-bold">Market Value</label>
                   <input
-                    type="text"
+                    type="number"
                     class="form-control"
                     id="marketValue"
                     name="marketValue"
+                    placeholder="in percent (%)"
                     required
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="employees" class="form-label">Employees</label>
-                  <input type="text" class="form-control" id="employees" name="employees" />
+                  <label for="employees" class="form-label fw-bold">Employees</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="employees"
+                    name="employees"
+                    placeholder="james bond, jackie chan"
+                  />
                 </div>
               </div>
 
               <!-- Second Column -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="ceo" class="form-label">CEO</label>
-                  <input type="text" class="form-control" id="ceo" name="ceo" required />
+                  <label for="ceo" class="form-label fw-bold">CEO</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="ceo"
+                    name="ceo"
+                    placeholder="ceo's name"
+                    required
+                  />
                 </div>
 
                 <div class="mb-3">
-                  <label for="products" class="form-label">Products</label>
-                  <input type="text" class="form-control" id="products" name="products" />
+                  <label for="products" class="form-label fw-bold">Products</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="products"
+                    name="products"
+                    placeholder="ice cream, pizza"
+                  />
                 </div>
                 <div class="mb-3">
-                  <label for="country" class="form-label">Country</label>
-                  <input type="text" class="form-control" id="country" name="country" required />
+                  <label for="country" class="form-label fw-bold">Country</label>
+                  <select id="country" name="country" class="form-select" required>
+                    <option selected value="Nigeria">Nigeria</option>
+                    <option value="Ghana">Ghana</option>
+                    <option value="USA">USA</option>
+                    <option value="Taiwan">Taiwan</option>
+                  </select>
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="mb-3">
-                  <label for="address" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="address" name="address" required />
+                  <label for="address" class="form-label fw-bold">Address</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    name="address"
+                    placeholder="1234 main street"
+                    required
+                  />
                 </div>
               </div>
             </div>
@@ -172,12 +213,13 @@
             >
               Close
             </button>
-            <input
-              type="submit"
+            <button
               class="btn"
-              id="addNewNote"
+              id="addNewOrg"
               style="background-color: #8d448b; color: white; padding: 10px 40px"
-            />
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>
@@ -198,7 +240,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" style="color: #8d448b" id="staticBackdropLabel">
+            <h1 class="modal-title fs-5 fw-bold" style="color: #8d448b" id="staticBackdropLabel">
               Update Organization
             </h1>
             <button
@@ -213,7 +255,7 @@
               <!-- First Column -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="organization" class="form-label">Name</label>
+                  <label for="organization" class="form-label fw-bold">Name</label>
                   <input type="text" class="form-control" id="organizationU" name="organization" />
                 </div>
                 <% if(locals.error) { %>
@@ -221,11 +263,11 @@
                 <% } %>
 
                 <div class="mb-3">
-                  <label for="marketValue" class="form-label">Market Value</label>
-                  <input type="text" class="form-control" id="marketValueU" name="marketValue" />
+                  <label for="marketValue" class="form-label fw-bold">Market Value</label>
+                  <input type="number" class="form-control" id="marketValueU" name="marketValue" />
                 </div>
                 <div class="mb-3">
-                  <label for="employees" class="form-label">Employees</label>
+                  <label for="employees" class="form-label fw-bold">Employees</label>
                   <input type="text" class="form-control" id="employeesU" name="employees" />
                 </div>
               </div>
@@ -233,22 +275,22 @@
               <!-- Second Column -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="ceo" class="form-label">CEO</label>
+                  <label for="ceo" class="form-label fw-bold">CEO</label>
                   <input type="text" class="form-control" id="ceoU" name="ceo" />
                 </div>
 
                 <div class="mb-3">
-                  <label for="products" class="form-label">Products</label>
+                  <label for="products" class="form-label fw-bold">Products</label>
                   <input type="text" class="form-control" id="productsU" name="products" />
                 </div>
                 <div class="mb-3">
-                  <label for="country" class="form-label">Country</label>
+                  <label for="country" class="form-label fw-bold">Country</label>
                   <input type="text" class="form-control" id="countryU" name="country" />
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="mb-3">
-                  <label for="address" class="form-label">Address</label>
+                  <label for="address" class="form-label fw-bold">Address</label>
                   <input type="text" class="form-control" id="addressU" name="address" required />
                 </div>
               </div>
@@ -285,19 +327,22 @@
   const jwtToken = "<%= token %>";
   console.log(jwtToken);
 
-  // const addNote = document.getElementById("addNewNote");
-  // addNote.addEventListener("click", (e) => {
-  const createOrg = () => {
-    // e.preventDefault();
+  const addOrg = document.getElementById("addNewOrg");
+  addOrg.addEventListener("click", (e) => {
+    e.preventDefault();
 
     const organization = document.getElementById("organization")?.value;
     const marketValue = document.getElementById("marketValue")?.value;
     const ceo = document.getElementById("ceo")?.value;
     const country = document.getElementById("country")?.value;
     const address = document.getElementById("address")?.value;
-    const products = document.getElementById("products")?.value;
-    const employees = document.getElementById("employees")?.value;
-    const requestData = { organization, marketValue, ceo, country, address };
+    const product = document.getElementById("products")?.value;
+    const employee = document.getElementById("employees")?.value;
+
+    products = product.split(",");
+    employees = employee.split(",");
+
+    const requestData = { organization, marketValue, ceo, country, address, products, employees };
     console.log(jwtToken);
     console.log(requestData);
 
@@ -318,15 +363,34 @@
           console.error("Error:", error);
         });
     }
-  };
-  //);
+  });
 
   // Get current Id
   let updateId = "";
   const getUpdateId = (id) => {
     if (id.parentElement.classList.contains("action-col")) {
-      updateId = id.parentElement.querySelector(".d-none").value;
+      updateId = id.parentElement.querySelector(".locateID").value;
     }
+    const ceoD = document.getElementById("ceoD").textContent;
+    const nameD = document.getElementById("nameD").textContent;
+    const countryD = document.getElementById("countryD").textContent;
+    let marketD = document.getElementById("marketD").textContent;
+    const addressD = document.getElementById("addressD").textContent;
+    const employeesD = document.getElementById("employeeD").textContent;
+    const productD = document.getElementById("productD").textContent;
+
+    // removed % from market value
+    marketD = marketD.split("");
+    marketD.splice(-1);
+
+    // Assign previous values for update
+    document.getElementById("ceoU").value = ceoD;
+    document.getElementById("organizationU").value = nameD;
+    document.getElementById("marketValueU").value = +marketD.join("");
+    document.getElementById("countryU").value = countryD;
+    document.getElementById("addressU").value = addressD;
+    document.getElementById("productsU").value = productD;
+    document.getElementById("employeesU").value = employeesD;
   };
 
   // Update Function
@@ -337,9 +401,13 @@
     const ceo = document.getElementById("ceoU")?.value;
     const country = document.getElementById("countryU")?.value;
     const address = document.getElementById("addressU")?.value;
-    const products = document.getElementById("productsU")?.value;
-    const employees = document.getElementById("employeesU")?.value;
-    const requestData = { organization, marketValue, ceo, country, address };
+    const product = document.getElementById("productsU")?.value;
+    const employee = document.getElementById("employeesU")?.value;
+
+    products = product.split(",");
+    employees = employee.split(",");
+
+    const requestData = { organization, marketValue, ceo, country, address, products, employees };
 
     let obj = Object.entries(requestData).filter((arr, i) => arr[1] !== "");
     obj = Object.fromEntries(obj);
@@ -364,7 +432,7 @@
   // Delete Function
   const deleteHandler = (id) => {
     if (id.parentElement.classList.contains("action-col")) {
-      const orgId = id.parentElement.querySelector(".d-none").value;
+      const orgId = id.parentElement.querySelector(".locateID").value;
       fetch(`/delete/${orgId}`, {
         method: "DELETE",
         headers: new Headers({

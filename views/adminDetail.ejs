@@ -1,9 +1,56 @@
 <%- include('partials/dashboardHeader') %>
-<main class="card mx-auto mt-5" style="width: 18rem">
-  <div class="card-body">
-    <h5 class="card-title"><%= org.organization %></h5>
+<main class="card mx-auto mt-5 p-2" style="width: 50%">
+  <div class="card-body border-bottom">
+    <h5 class="card-title text-uppercase fs-1 fw-bold"><%= org.organization %></h5>
     <p class="card-text"><%= org.address %></p>
   </div>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row">Organization</th>
+        <td><%= org.organization %></td>
+      </tr>
+      <tr>
+        <th scope="row">CEO</th>
+        <td><%= org.ceo %></td>
+      </tr>
+      <tr>
+        <th scope="row">No of Employees</th>
+        <td colspan="2"><%= org.noOfEmployees %></td>
+      </tr>
+      <tr>
+        <th scope="row">Market Value</th>
+        <td colspan="2"><%= org.marketValue %>%</td>
+      </tr>
+      <tr>
+        <th scope="row">Products</th>
+        <td colspan="2"><%= JSON.parse(org.products).join(',') %></td>
+      </tr>
+      <tr>
+        <th scope="row">Employees</th>
+        <td colspan="2"><%= JSON.parse(org.employees).join(',') %></td>
+      </tr>
+      <tr>
+        <th scope="row">Address</th>
+        <td colspan="2"><%= org.address %></td>
+      </tr>
+      <tr>
+        <th scope="row">Created At</th>
+        <td colspan="2"><%= new Date(org.createdAt).toLocaleString() %></td>
+      </tr>
+      <tr>
+        <th scope="row">Updated At</th>
+        <td colspan="2"><%= new Date(org.updatedAt).toLocaleString() %></td>
+      </tr>
+    </tbody>
+  </table>
+  <a
+    type="button"
+    href="/dashboard"
+    class="btn"
+    style="background-color: #8d448b; width: 100px; color: white"
+    >Go back</a
+  >
 </main>
 
 <footer><%- include('partials/footer.ejs') %></footer>
