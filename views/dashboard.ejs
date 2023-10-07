@@ -54,11 +54,13 @@
           <% notes.forEach((note, i ) => { %>
           <tr>
             <th scope="row"><%= i+1 %></th>
-            <td><a href="/detail/<%= note.id %>" id="titleD"><%= note.Title %></a></td>
-            <td id="desD"><%= note.description %></td>
-            <td id="dateD"><%= new Date(note.DueDate).toLocaleString() %></td>
+            <td>
+              <a href="/detail/<%= note.id %>" id="titleD-<%= note.id %>"><%= note.Title %></a>
+            </td>
+            <td id="desD-<%= note.id %>"><%= note.description %></td>
+            <td id="dateD-<%= note.id %>"><%= new Date(note.DueDate).toLocaleString() %></td>
             <td
-              id="statusD"
+              id="statusD-<%= note.id %>"
               class="fs-14 pt-1 badge rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
             >
               <%= note.status %>
@@ -294,10 +296,10 @@
     if (id.parentElement.classList.contains("action-col")) {
       updateId = id.parentElement.querySelector(".locateID").value;
     }
-    const titleD = document.getElementById("titleD").textContent;
-    const desD = document.getElementById("desD").textContent;
-    const dateD = document.getElementById("dateD").textContent;
-    const statusD = document.getElementById("statusD").textContent;
+    const titleD = document.getElementById(`titleD-${updateId}`).textContent;
+    const desD = document.getElementById(`desD-${updateId}`).textContent;
+    const dateD = document.getElementById(`dateD-${updateId}`).textContent;
+    const statusD = document.getElementById(`statusD-${updateId}`).textContent;
 
     console.log(titleD, desD, dateD, statusD);
     // Assign previous values for update

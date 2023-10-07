@@ -11,7 +11,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Copy the rest of the application code to the container
-COPY . .
+COPY . ./
 
 # Compile tsc 
 RUN yarn build
