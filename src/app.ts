@@ -12,12 +12,12 @@ import db from "./config/database.config";
 
 // force: true -  to drop the database
 db.sync()
-  .then(() => {
-    console.log("Database connected successfully!!");
-  })
-  .catch((err: createError.HttpError) => {
-    console.log(err);
-  });
+	.then(() => {
+		console.log("Database connected successfully!!");
+	})
+	.catch((err: createError.HttpError) => {
+		console.log(err);
+	});
 
 const app = express();
 
@@ -37,18 +37,18 @@ app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+	next(createError(404));
 });
 
 // error handler
 app.use((err: createError.HttpError, req: Request, res: Response, next: NextFunction) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
+	// render the error page
+	res.status(err.status || 500);
+	res.render("error");
 });
 
 export default app;
