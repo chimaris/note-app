@@ -27,31 +27,18 @@ export const loginUserSchema = Joi.object().keys({
   password: Joi.string().min(3).required().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
 });
 
-export const createOrganizationSchema = Joi.object().keys({
-  organization: Joi.string().trim().min(4).required(),
-  marketValue: Joi.string().trim().lowercase().required(),
-  ceo: Joi.string().required(),
-  country: Joi.string().required(),
-  // employees: Joi.array().items(Joi.string()),
-  // products: Joi.array().items(Joi.string()),
-  address: Joi.string().required(),
+export const createNoteSchema = Joi.object().keys({
+  Title: Joi.string().trim().required(),
+  description: Joi.string().required(),
+  DueDate: Joi.date().required(),
+  // status: Joi.string().required(),
 });
 
-export const updateOrganizationSchema = Joi.object().keys({
-  organization: Joi.string().trim().min(4),
-  marketValue: Joi.string().trim().lowercase(),
-  ceo: Joi.string(),
-  country: Joi.string(),
-  // employees: Joi.array().items(Joi.string()),
-  // products: Joi.array().items(Joi.string()),
-  address: Joi.string(),
+
+export const updateNoteSchema = Joi.object().keys({
+  Title: Joi.string().trim(),
+  description: Joi.string(),
+  DueDate: Joi.date(),
+  status: Joi.string(),
 });
 
-// organization: string;
-//   products: string[];
-//   marketValue: string;
-//   address: string;
-//   ceo: string;
-//   country: string;
-//   noOfEmployees: number;
-//   employees: string[];

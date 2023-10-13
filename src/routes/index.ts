@@ -1,75 +1,168 @@
 import express, { Request, Response, NextFunction } from "express";
-import { createOrganizationSchema, option } from "../utils/utils";
-import { OrganizationInstance } from "../model/organizationModel";
+import { createNoteSchema, option, updateNoteSchema } from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
 import { auth } from "../middlewares/auth";
+import { UserInstance } from "../model/userModel";
+import { NoteInstance } from "../model/noteModel";
 
 var router = express.Router();
 
-/* GET home page. */
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const allOrganization = await OrganizationInstance.findAll();
-  console.log(allOrganization);
-  res.render("index", { title: "Express", notes: allOrganization[0].dataValues });
+  const allNotes = await NoteInstance.findAll({
+    include: [{ model: UserInstance, as: "user" }],
+  });
+  return res.render("index", { notes: allNotes });
 });
 
 router.get("/login", (req: Request, res: Response, next: NextFunction) => {
-  res.render("login");
+  return res.render("login");
+});
+
+router.get("/logout", (req: Request, res: Response, next: NextFunction) => {
+  res.clearCookie("token");
+  return res.redirect("/login");
 });
 
 router.get("/register", (req: Request, res: Response, next: NextFunction) => {
-  res.render("register");
+  return res.render("register");
 });
 
-router.get("/dashboard", async (req: Request, res: Response, next: NextFunction) => {
-  const allOrganization = await OrganizationInstance.findAll();
-  console.log(allOrganization[0].dataValues);
-  res.render("dashboard", { token: req.cookies.token, notes: allOrganization[0].dataValues });
+router.get("/dashboard", auth, async (req: Request | any, res: Response, next: NextFunction) => {
+  const { id, fullname } = req.user;
+  try {
+    const allNotes = await NoteInstance.findAll({
+      where: { userId: id },
+      include: [{ model: UserInstance, as: "user" }],
+    });
+
+    res.render("dashboard", {
+      token: req.cookies.token,
+      notes: allNotes,
+      fullname: fullname,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post("/dashboard", auth, async (req: Request | any, res: Response, next: NextFunction) => {
-  // get and validate the user input with joi
-  const { organization } = req.body;
-  const id = uuidv4();
+  try {
+    const { fullname } = req.user;
 
-  console.log("post org");
+    // get and validate the user input with joi
+    let { Title } = req.body;
+    const id = uuidv4();
 
-  // Get user id from middleware auth
-  const verified = req.user;
+    // Get user info from middleware auth
+    const verified = req.user;
 
-  // validate with joi
-  const validatedInput = createOrganizationSchema.validate(req.body, option);
-  console.log(validatedInput);
+    // validate with joi
+    const validatedInput = createNoteSchema.validate(req.body, option);
 
+    if (validatedInput.error) {
+      return res.render("dashboard", {
+        fullname: fullname,
+        error: validatedInput.error.details[0].message,
+      });
+    }
+
+    // check if the organization already exist
+    const org = await NoteInstance.findOne({
+      where: { Title: Title },
+    });
+    if (org) {
+      return res.render("dashboard", { error: "Note already exist" });
+    }
+
+    req.body.status = "pending";
+
+    // save to database
+    const newOrg = await NoteInstance.create({
+      id: id,
+      userId: verified.id,
+      ...req.body,
+    });
+    if (newOrg) {
+      return res.redirect("/dashboard");
+    }
+
+    console.log("Didnt create");
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.patch("/edit/:id", auth, async (req: Request | any, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  let { Title } = req.body;
+
+  // validate req body with joi
+  const validatedInput = updateNoteSchema.validate(req.body, option);
   if (validatedInput.error) {
     return res.render("dashboard", { error: validatedInput.error.details[0].message });
   }
+  // find the data to update from database and update
+  const org = await NoteInstance.findOne({ where: { id } });
 
-  // check if the organization already exist
-  const org = await OrganizationInstance.findOne({
-    where: { organization: organization },
-  });
-  if (org) {
-    return res.render("dashboard", { error: "Organization already exist" });
+  if (!org) {
+    return res.render("dashboard", { error: "Record not found" });
   }
 
-  // get number of employees
-  // const noOfEmployees = employees.length;
-  // save to database
-  const newOrg = await OrganizationInstance.create({
-    id: id,
-    userId: verified.id,
-    //   noOfEmployees,
-    ...req.body,
-  });
+  const updated = await org.update({ ...req.body });
 
-  return res.redirect("dashboard");
-
-  // print the result
-  // return res.status(201).json({
-  //   message: "Created Successfully",
-  //   newOrg,
-  // });
+  if (updated) {
+    return res.redirect("/dashboard");
+  }
 });
+
+router.delete("/delete/:id", auth, async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+
+  const org = await NoteInstance.findOne({ where: { id } });
+
+  if (!org) {
+    return res.status(400).json({
+      error: "Record not found",
+    });
+  }
+
+  // DELETE Record
+  const deleted = (await org.destroy()) as unknown as { [key: string]: string };
+
+  if (deleted) {
+    return res.redirect("/dashboard");
+  }
+});
+
+router.get("/detail/:id", async (req: Request | any, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    const note = await NoteInstance.findOne({ where: { id } });
+    if (note) {
+      return res.render("detail", { note });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// Admin details
+router.get(
+  "/dashboard/detail/:id",
+  auth,
+  async (req: Request | any, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const note = await NoteInstance.findOne({ where: { id } });
+      if (note) {
+        return res.render("adminDetail", { note });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 
 export default router;

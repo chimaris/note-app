@@ -1,53 +1,57 @@
 <%- include('partials/header') %>
-<style>
-  .input {
-    background-color: cadetblue;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-  }
-</style>
 
-<section class="input">
-  <div class="container min-vh-100 d-flex justify-content-center align-items-center">
-    <form class="col-6" action="/users/login" method="POST">
-      <div class="mb-3 form-group">
-        <h4 class="text-center">Please Login</h4>
-        <label for="exampleInputEmail1" class="form-label text-bold">Email</label>
-        <input
-          type="email"
-          name="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          required
-        />
-      </div>
-      <div class="mb-3 form-group">
-        <label for="exampleInputPassword1" class="form-label text-bold">Password</label>
-        <input
-          type="password"
-          name="password"
-          class="form-control"
-          id="exampleInputPassword1"
-          required
-        />
-
-        <div class="d-block text-right">
-          <p>
-            <a
-              href="#"
-              class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-              >Forget Password</a
-            >
-          </p>
+<main class="container pt-5">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center">Login</h2>
+          <form action="/users/login" method="POST">
+            <% if(locals.error) { %> <% if(error == "Password or Email are incorrect") { %>
+            <div class="alert alert-danger text-center" role="alert">
+              Email or password is incorrect
+            </div>
+            <% } } %>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="text" class="form-control" id="email" name="email" required />
+              <% if(locals.error) { %> <% if(error == "email is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Email is required</span
+              >
+              <% } } %>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required />
+              <% if(locals.error) { %> <% if(error == "password is not allowed to be empty") { %>
+              <span style="color: #f09; font-weight: bold; margin: 10px 4px"
+                >Password is required</span
+              >
+              <% } } %>
+            </div>
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="rememberMe"
+                style="accent-color: #8d448b"
+              />
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <div class="col-12 d-block text-center">
+              <button
+                type="submit"
+                class="btn"
+                style="background-color: #8d448b; color: white; padding: 10px 40px"
+              >
+                Login
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="d-block text-center">
-        <button type="submit" class="btn btn-primary">Login</button>
-      </div>
-    </form>
+    </div>
   </div>
-</section>
+</main>
 <footer><%- include('partials/footer.ejs') %></footer>

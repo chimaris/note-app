@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+<main class="card mx-auto mt-5 p-2" style="width: 50%">
+  <div class="card-body border-bottom">
+    <h5 class="card-title text-uppercase fs-1 fw-bold"><%= note.Title %></h5>
+  </div>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row"><Title></Title></th>
+        <td><%= note.Title %></td>
+      </tr>
+      <tr>
+        <th scope="row">Description</th>
+        <td><%= note.description %></td>
+      </tr>
+      <tr>
+        <th scope="row">Due Date</th>
+        <td colspan="2"><%= new Date(note.DueDate).toLocaleString() %></td>
+      </tr>
+      <tr>
+        <th scope="row">Status</th>
+        <td
+          style="text-align: center"
+          class="fs-14 badge pt-1 rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
+        >
+          <%= note.status %>
+        </td>
+      </tr>
+
+      <tr>
+        <th scope="row">Created At</th>
+        <td colspan="2"><%= new Date(note.createdAt).toLocaleString() %></td>
+      </tr>
+      <tr>
+        <th scope="row">Updated At</th>
+        <td colspan="2"><%= new Date(note.updatedAt).toLocaleString() %></td>
+      </tr>
+    </tbody>
+  </table>
+  <a
+    type="button"
+    href="/"
+    class="btn"
+    style="background-color: #8d448b; width: 100px; color: white"
+    >Go back</a
+  >
+</main>
+
+<footer><%- include('partials/footer.ejs') %></footer>

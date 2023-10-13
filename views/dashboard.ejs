@@ -4,14 +4,11 @@
   href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
 />
 <!-- load fontawesome -->
-
-<style>
-  main {
-    padding: 50px;
-  }
-</style>
-<main>
-  <h2 id="userName">Welcome, Stella Maris</h2>
+<main style="width: 95%; margin: auto">
+  <h2 id="userName" class="mt-3">Welcome, <%= fullname %></h2>
+  <% if(locals.error) { %>
+  <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
+  <% } %>
   <div class="d-flex flex-wrap align-items-center justify-content-between align-content-center">
     <div class="d-flex justify-content-between mt-5" style="width: 100%">
       <form class="col-6 col-lg-auto mb-lg-0 me-lg-3">
@@ -23,61 +20,73 @@
         />
       </form>
 
-      <!-- Button trigger add note modal -->
-
+      <!-- Button trigger add org modal -->
       <button
         type="button"
-        class="btn btn-primary h-25"
+        class="btn h-25"
         data-bs-toggle="modal"
         data-bs-target="#staticBackdrop"
+        style="background-color: #8d448b; color: white; padding: 10px"
       >
         Add Note
       </button>
     </div>
     <!-- Tables starts here -->
-    <% if(notes.length > 0) { %>
-    <table
-      class="table caption-top mt-5 table-bordered text-center table-hover table-striped table-responsive"
-      style="margin: auto"
-    >
-      <caption>
-        List of all the notes
-      </caption>
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">organization</th>
-          <th scope="col">ceo</th>
-          <th scope="col">address</th>
-          <th scope="col">marketValue</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% notes.forEach((note, i ) => { %>
-        <tr>
-          <th scope="row"><%= i+1 %></th>
-          <td><a href="/notes/<%= note.id %>" id="viewDetail"><%= note.organization %></a></td>
-          <td><%= note.ceo %></td>
-          <td><%= address %></td>
-          <td><%= note.marketValue %></td>
-          <td class="action-col" style="width: 30px">
-            <span role="button" data-bs-toggle="modal" data-bs-target="#updateModal"
-              ><i class="fa fa-edit" style="font-size: 24px; color: blue"></i
-            ></span>
-            <input class="d-none" id="userId" value="<%= note.id %>" />
+    <div style="overflow: auto; width: 100%">
+      <% if(notes.length > 0) { %>
+      <table
+        class="table caption-top table-bordered text-center table-hover table-striped table-responsive"
+      >
+        <caption>
+          List of all the organizations
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Description</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% notes.forEach((note, i ) => { %>
+          <tr>
+            <th scope="row"><%= i+1 %></th>
+            <td>
+              <a href="/detail/<%= note.id %>" id="titleD-<%= note.id %>"><%= note.Title %></a>
+            </td>
+            <td id="desD-<%= note.id %>"><%= note.description %></td>
+            <td id="dateD-<%= note.id %>"><%= new Date(note.DueDate).toLocaleString() %></td>
+            <td
+              id="statusD-<%= note.id %>"
+              class="fs-14 pt-1 badge rounded-pill text-bg-<%= note.status === 'pending' ? 'secondary' : 'primary' %>"
+            >
+              <%= note.status %>
+            </td>
+            <td class="action-col" style="width: 30px">
+              <span
+                role="button"
+                data-bs-toggle="modal"
+                data-bs-target="#updateModal"
+                onclick="getUpdateId(this)"
+                ><i class="fa fa-edit" style="font-size: 24px; color: #8d448b"></i
+              ></span>
+              <input class="d-none locateID" id="userId" value="<%= note.id %>" />
 
-            <span role="button" id="deleteNote"
-              ><i class="fa fa-times" style="font-size: 24px; color: red"></i
-            ></span>
-          </td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table>
-    <% }else {%>
-    <h2 class="text-center mt-5">No Note Found!</h2>
-    <% } %>
+              <span role="button" id="deleteNote" onclick="deleteHandler(this)"
+                ><i class="fa fa-times" style="font-size: 24px; color: red"></i
+              ></span>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% }else {%>
+      <h2 class="text-center m-auto mt-5" style="margin-top: 150px">No Record Found!</h2>
+      <% } %>
+    </div>
   </div>
 
   <!-- ADD Form Modal -->
@@ -94,8 +103,8 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5 text-primary" id="staticBackdropLabel">
-              Add New Organization
+            <h1 class="modal-title fs-5 fw-bold" style="color: #8d448b" id="staticBackdropLabel">
+              Add New Note
             </h1>
             <button
               type="button"
@@ -105,54 +114,137 @@
             ></button>
           </div>
           <div class="modal-body">
-            <div class="row">
+            <div class="col-md-12">
               <!-- First Column -->
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="mb-3">
-                  <label for="organization" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="organization" name="organization" />
+                  <label for="title" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    name="Title"
+                    placeholder="Title"
+                    required="required"
+                  />
                 </div>
                 <% if(locals.error) { %>
                 <div style="color: #f09; font-weight: bold; margin: 10px 4px"><%= error %></div>
                 <% } %>
 
                 <div class="mb-3">
-                  <label for="marketValue" class="form-label">Market Value</label>
-                  <input type="text" class="form-control" id="marketValue" name="marketValue" />
+                  <label for="description" class="form-label">Description</label>
+                  <textarea
+                    class="form-control"
+                    id="description"
+                    rows="3"
+                    name="description"
+                    placeholder="Write in full detail"
+                    required="required"
+                  ></textarea>
                 </div>
                 <div class="mb-3">
-                  <label for="employees" class="form-label">Employees</label>
-                  <input type="text" class="form-control" id="employees" name="employees" />
-                </div>
-              </div>
-
-              <!-- Second Column -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="ceo" class="form-label">CEO</label>
-                  <input type="text" class="form-control" id="ceo" name="ceo" />
-                </div>
-
-                <div class="mb-3">
-                  <label for="products" class="form-label">Products</label>
-                  <input type="text" class="form-control" id="products" name="products" />
-                </div>
-                <div class="mb-3">
-                  <label for="country" class="form-label">Country</label>
-                  <input type="text" class="form-control" id="country" name="country" />
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mb-3">
-                  <label for="address" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="address" name="address" required />
+                  <label for="dueDate" class="form-label">Due Date</label>
+                  <input type="date" name="DueDate" class="form-control" id="DueDate" required />
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="padding: 10px 40px"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              class="btn"
+              id="addNewOrg"
+              style="background-color: #8d448b; color: white; padding: 10px 40px"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Update Form Modal -->
+  <form>
+    <div
+      class="modal fade"
+      id="updateModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="updateModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5 text-primary" id="updateModalLabel">Update Note</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="titleU"
+                name="Title"
+                placeholder="Title"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea
+                class="form-control"
+                id="descriptionU"
+                rows="3"
+                name="description"
+                placeholder="Write in full detail"
+                required
+              ></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select
+                class="form-select"
+                aria-label="Select status"
+                name="status"
+                id="statusU"
+                required
+              >
+                <option value="">Select status</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="dueDate" class="form-label">Due Date</label>
+              <input type="date" name="DueDate" class="form-control" id="DueDateU" required />
+            </div>
+          </div>
+          <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button class="btn btn-primary" id="addNewNote">Submit</button>
+            <button
+              class="btn"
+              id="updateButton"
+              style="background-color: #8d448b; color: white; padding: 10px 40px"
+            >
+              Update
+            </button>
           </div>
         </div>
       </div>
@@ -160,25 +252,26 @@
   </form>
 </main>
 <footer><%- include('partials/footer.ejs') %></footer>
+
+<!-- JavaScript Codes to consume APIs -->
 <script>
+  console.log("<%= notes %>");
   const jwtToken = "<%= token %>";
   console.log(jwtToken);
 
-  const addNote = document.getElementById("addNewNote");
-  addNote.addEventListener("click", (e) => {
+  const addOrg = document.getElementById("addNewOrg");
+  addOrg.addEventListener("click", (e) => {
     e.preventDefault();
-    const organization = document.getElementById("organization")?.value;
-    const marketValue = document.getElementById("marketValue")?.value;
-    const ceo = document.getElementById("ceo")?.value;
-    const country = document.getElementById("country")?.value;
-    const address = document.getElementById("address")?.value;
-    const products = document.getElementById("products")?.value;
-    const employees = document.getElementById("employees")?.value;
-    const requestData = { organization, marketValue, ceo, country, address };
+
+    const Title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const DueDate = document.getElementById("DueDate").value;
+
+    const requestData = { Title, description, DueDate };
     console.log(jwtToken);
     console.log(requestData);
 
-    if (marketValue != "" && ceo != "" && country != "" && address != "") {
+    if (Title != "" && description != "" && DueDate != "") {
       fetch("/dashboard", {
         method: "POST",
         headers: new Headers({
@@ -196,4 +289,72 @@
         });
     }
   });
+
+  // Get current Id
+  let updateId = "";
+  const getUpdateId = (id) => {
+    if (id.parentElement.classList.contains("action-col")) {
+      updateId = id.parentElement.querySelector(".locateID").value;
+    }
+    const titleD = document.getElementById(`titleD-${updateId}`).textContent;
+    const desD = document.getElementById(`desD-${updateId}`).textContent;
+    const dateD = document.getElementById(`dateD-${updateId}`).textContent;
+    const statusD = document.getElementById(`statusD-${updateId}`).textContent;
+
+    console.log(titleD, desD, dateD, statusD);
+    // Assign previous values for update
+    document.getElementById("descriptionU").value = desD;
+    // document.getElementById("DueDateU").value = dateD;
+    document.getElementById("statusU").value = statusD;
+    document.getElementById("titleU").value = titleD;
+  };
+
+  // Update Function
+  document.getElementById("updateButton").addEventListener("click", (e) => {
+    e.preventDefault();
+    const Title = document.getElementById("titleU").value;
+    const description = document.getElementById("descriptionU").value;
+    const status = document.getElementById("statusU").value;
+    const DueDate = document.getElementById("DueDateU").value;
+
+    const requestData = { Title, description, status, DueDate };
+
+    let obj = Object.entries(requestData).filter((arr, i) => arr[1] !== "");
+    obj = Object.fromEntries(obj);
+
+    fetch(`/edit/${updateId}`, {
+      method: "PATCH",
+      headers: new Headers({
+        Authorization: jwtToken,
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(obj),
+    })
+      .then((response) => {
+        location.reload();
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
+  // Delete Function
+  const deleteHandler = (id) => {
+    if (id.parentElement.classList.contains("action-col")) {
+      const orgId = id.parentElement.querySelector(".locateID").value;
+      fetch(`/delete/${orgId}`, {
+        method: "DELETE",
+        headers: new Headers({
+          Authorization: jwtToken,
+        }),
+      })
+        .then((response) => {
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  };
 </script>
